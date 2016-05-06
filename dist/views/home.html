@@ -3,7 +3,7 @@
     <div class="row row-content">    	
 
         <div class="col-xs-12">
-            <div id="mycarousel" class="carousel slide" data-ride="carousel">
+            <div id="mycarousel" class="carousel slide" data-interval="3000" data-ride="carousel">
                 <!-- Indicators -->
                 <ol class="carousel-indicators">
                     <li data-target="#mycarousel" data-slide-to="0" class="active"></li>
@@ -81,7 +81,7 @@
             <div class="media">
                 <div class="media-left media-middle">
                     <a ui-sref="app.dishdetails({id: dish.id})">
-                    <img class="media-object img-thumbnail"
+                    <img class="media-object img-rounded"
                     ng-src={{dish.image}} alt="{{dish.name}}">
                     </a>
                 </div>
@@ -103,7 +103,7 @@
         <div class="col-xs-12 col-sm-9">
             <div class="media">
                 <div class="pull-right">
-                    <img class="media-object img-thumbnail"
+                    <img class="media-object img-rounded"
                     ng-src={{promotion.image}} alt="{{promotion.name}}">
                 </div>
                 <div class="media-body">
@@ -124,7 +124,7 @@
         <div class="col-xs-12 col-sm-9 col-sm-pull-3">
             <div class="media">
                 <div class="media-left media-middle">
-                    <img class="media-object img-thumbnail"
+                    <img class="media-object img-rounded"
                     ng-src={{leader.image}} alt="{{leader.abbr}}">
                 </div>
                 <div class="media-body">

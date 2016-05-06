@@ -2,6 +2,15 @@
 
 angular.module('confusionApp')
 
+        .value('duScrollDuration', 500)
+        .value('duScrollOffset', 30)
+        .controller('myCtrl', function($scope, $document) {
+            var target = angular.element(document.getElementById('some-id'));
+            if ($document.isElementInDocument(target)) {
+                $document.scrollToElementAnimated(target);
+            }
+        })
+
         .controller('MenuController', ['$scope', 'menuFactory', function($scope, menuFactory) {
 
             $scope.tab = 1;
@@ -94,7 +103,7 @@ angular.module('confusionApp')
 
             $scope.promotion = menuFactory.getPromotion(0);
 
-            $scope.leader = corporateFactory.getLeader(3);
+            $scope.leader = corporateFactory.getLeader(2);
 
         }])
 
