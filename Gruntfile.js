@@ -34,11 +34,20 @@ module.exports = function (grunt) {
 
 	    copy: {
 			dist: {
-				cwd: 'app',
-				src: [ '**','!styles/**/*.css','!scripts/**/*.js'],
-				dest: 'dist',
-				expand: true
+					cwd: 'app',
+					src: [ '**',
+						'!styles/**/*.css',
+						'!scripts/**/*.js', 
+						'*.{ico,png,txt}',
+		                '.htaccess',
+		                'images/{,*/}*.webp',
+		                '{,*/}*.html',
+		                'styles/fonts/{,*/}*.*'],
+					dest: 'dist',
+					expand: true
 			},
+
+
 			fonts: {
 				files:[
 					{

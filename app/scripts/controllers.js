@@ -16,10 +16,16 @@ angular.module('confusionApp')
             $scope.tab = 1;
             $scope.filtText = '';
             $scope.showDetails = false;
-            $scope.showMenu = false;
+            $scope.showMenu = true;
             $scope.message = "Loading ...";
-
-            $scope.dishes = menuFactory.getDishes();
+            $scope.dishes = menuFactory.getDishes().query(
+                function(response) {
+                    $scope.dishes = response;
+                    $scope.showMenu = true;
+                },
+                function(response) {
+                    $scope.message = "Error: "+response.status + " " + response.statusText;
+                });
 
             $scope.select = function(setTab) {
                 $scope.tab = setTab;
@@ -75,12 +81,21 @@ angular.module('confusionApp')
         }])
 
         .controller('DishDetailController', ['$scope', '$stateParams', 'menuFactory', function($scope, $stateParams, menuFactory) {
-            $scope.showDish = false;
-            $scope.message = "Loading ...";
-            $scope.dish = menuFactory.getDish(parseInt($stateParams.id, 10));
+            $scope.showDish = true;
+            $scope.message="Loading ...";
+            $scope.dish = menuFactory.getDishes().get({id:parseInt($stateParams.id,10)})
+                            .$promise.then(
+                                function(response){
+                                    $scope.dish = response;
+                                    $scope.showDish = true;
+                                },
+                                function(response) {
+                                    $scope.message = "Error: "+response.status + " " + response.statusText;
+                                }
+                            );
         }])
 
-        .controller('DishCommentController', ['$scope', 'menuFactory', function($scope, menuFactory) {
+        .controller('DishCommentController', ['$scope', 'menuFactory', function($scope,menuFactory) {
             $scope.mycomment = {rating:5, comment:"", author:"", date:""};
             $scope.ratings = [1, 2, 3, 4, 5];
 
@@ -99,7 +114,18 @@ angular.module('confusionApp')
 
         .controller('IndexController', ['$scope','menuFactory', 'corporateFactory', function($scope, menuFactory, corporateFactory) {
 
-            $scope.dish = menuFactory.getDish(0);
+            $scope.showDish = true;
+            $scope.message="Loading ...";
+            $scope.dish = menuFactory.getDishes().get({id:1})
+                            .$promise.then(
+                                function(response){
+                                    $scope.dish = response;
+                                    $scope.showDish = true;
+                                },
+                                function(response) {
+                                    $scope.message = "Error: "+response.status + " " + response.statusText;
+                                }
+                            );
 
             $scope.promotion = menuFactory.getPromotion(0);
 

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('confusionApp', ['ui.router', 'duScroll'])
+angular.module('confusionApp', ['ui.router', 'ngResource', 'duScroll'])
     .config(function($stateProvider, $urlRouterProvider) {
         $stateProvider
              
