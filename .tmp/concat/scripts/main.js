@@ -1058,8 +1058,9 @@ angular.module('confusionApp')
             $scope.tab = 1;
             $scope.filtText = '';
             $scope.showDetails = false;
-            $scope.showMenu = true;
+            $scope.showMenu = false;
             $scope.message = "Loading ...";
+
             $scope.dishes = menuFactory.getDishes().query(
                 function(response) {
                     $scope.dishes = response;
@@ -1067,7 +1068,7 @@ angular.module('confusionApp')
                 },
                 function(response) {
                     $scope.message = "Error: "+response.status + " " + response.statusText;
-                });
+            });
 
             $scope.select = function(setTab) {
                 $scope.tab = setTab;
@@ -1096,48 +1097,51 @@ angular.module('confusionApp')
         }])
 
         .controller('ContactController', ['$scope', function($scope) {
+
             $scope.feedback = {mychannel:"", firstName:"", lastName:"", agree:false, email:"" };
-                        var channels = [{value:"tel", label:"Tel."}, {value:"Email",label:"Email"}];
-                        $scope.channels = channels;
+
+            var channels = [{value:"tel", label:"Tel."}, {value:"Email",label:"Email"}];
+
+            $scope.channels = channels;
             $scope.invalidChannelSelection = false;
         }])
 
 
-        .controller('FeedbackController', ['$scope', function($scope) {
-            $scope.sendFeedback = function() {
-                    console.log($scope.feedback);
-                    if ($scope.feedback.agree && ($scope.feedback.mychannel === "")&& !$scope.feedback.mychannel) {
-                    $scope.invalidChannelSelection = true;
-                        console.log('incorrect');
-                    }
-                    else {
-                        $scope.invalidChannelSelection = false;
-                        $scope.feedback = {mychannel:"", firstName:"", lastName:"",
-                                           agree:false, email:"" };
-                        $scope.feedback.mychannel="";
+        .controller('FeedbackController', ['$scope', 'feedbackFactory', function($scope, feedbackFactory) {
 
-                        $scope.feedbackForm.$setPristine();
-                        console.log($scope.feedback);
-                    }
+            $scope.sendFeedback = function() {
+                console.log($scope.feedback);
+
+                if ($scope.feedback.agree && ($scope.feedback.mychannel === "")) {
+                    $scope.invalidChannelSelection = true;
+                    console.log('incorrect');
+                }
+                else {
+                    $scope.invalidChannelSelection = false;
+                    feedbackFactory.getFeedback().save($scope.feedback);
+                    $scope.feedback = {mychannel:"", firstName:"", lastName:"", agree:false, email:"" };
+                    $scope.feedbackForm.$setPristine();
+                    console.log($scope.feedback);
+                }
             };
         }])
 
         .controller('DishDetailController', ['$scope', '$stateParams', 'menuFactory', function($scope, $stateParams, menuFactory) {
-            $scope.showDish = true;
-            $scope.message="Loading ...";
-            $scope.dish = menuFactory.getDishes().get({id:parseInt($stateParams.id,10)})
-                            .$promise.then(
-                                function(response){
-                                    $scope.dish = response;
-                                    $scope.showDish = true;
-                                },
-                                function(response) {
-                                    $scope.message = "Error: "+response.status + " " + response.statusText;
-                                }
-                            );
+            $scope.showDish = false;
+            $scope.message = "Loading ...";
+            $scope.dish = menuFactory.getDishes().get({id: parseInt($stateParams.id, 10)})
+                .$promise.then(
+                    function(response) {
+                        $scope.dish = response;
+                        $scope.showDish = true;
+                    },
+                    function(response) {
+                        $scope.message = "Error: "+response.status + " " + response.statusText;
+                    }
+            );
         }])
 
-        .controller('DishCommentController', ['$scope', 'menuFactory', function($scope,menuFactory) {
+        .controller('DishCommentController', ['$scope', 'menuFactory', function($scope, menuFactory) {
             $scope.mycomment = {rating:5, comment:"", author:"", date:""};
             $scope.ratings = [1, 2, 3, 4, 5];
 
@@ -1153,119 +1157,103 @@ angular.module('confusionApp')
             };
         }])
 
-
-        .controller('IndexController', ['$scope','menuFactory', 'corporateFactory', function($scope, menuFactory, corporateFactory) {
-
-            $scope.showDish = true;
+        .controller('IndexController', ['$scope', 'menuFactory', 'corporateFactory', function($scope, menuFactory, corporateFactory) {
+            $scope.showDish = false;
             $scope.message="Loading ...";
-            $scope.dish = menuFactory.getDishes().get({id:1})
-                            .$promise.then(
-                                function(response){
-                                    $scope.dish = response;
-                                    $scope.showDish = true;
-                                },
-                                function(response) {
-                                    $scope.message = "Error: "+response.status + " " + response.statusText;
-                                }
-                            );
+            $scope.dish = menuFactory.getDishes().get({id:0})
+                .$promise.then(
+                    function(response) {
+                        $scope.dish = response;
+                        $scope.showDish = true;
+                    },
+                    function(response) {
+                        $scope.message = "Error: " + response.status + " " + response.statusText;
+                    }
+                );
 
-            $scope.promotion = menuFactory.getPromotion(0);
+            $scope.showPromotion = false;
+            $scope.promotionMessage = "Loading...";
+            $scope.promotion = menuFactory.getPromotion(0).get()
+                .$promise.then(
+                    function(response) {
+                        $scope.promotion = response;
+                        $scope.showPromotion = true;
+                    },
+                    function(response) {
+                        $scope.promotionMessage = "Error: " + response.status + " " + response.statusText;
+                    }
+                );
 
-            $scope.leader = corporateFactory.getLeader(2);
+            $scope.showLeader = true;
+            $scope.leaderStatus = "Loading...";
+            $scope.leader = corporateFactory.getLeader(1).get()
+                .$promise.then(
+                    function(response) {
+                        $scope.leader = response;
+                        $scope.showLeader = true;
+                    },
+                    function(response) {
+                      $scope.leaderStatus = "Error: " + response.status + " " + response.statusText;
+                    }
+                );
 
         }])
 
         .controller('AboutController', ['$scope', 'corporateFactory', function($scope, corporateFactory) {
 
-            $scope.leaders = corporateFactory.getLeaders();
-
+            $scope.showLeaders = true;
+            $scope.leadersStatus = "Loading...";
+            $scope.leaders = corporateFactory.getLeaders().query(
+                function(response) {
+                    $scope.leaders = response;
+                    $scope.showLeaders = true;
+                },
+                function(response) {
+                    $scope.leadersStatus = "Error: " + response.status + " " + response.statusText;
+            });
         }])
-;
-;'use strict';
+;;'use strict';
 
 angular.module('confusionApp')
 		
 		.constant("baseURL","http://localhost:4000/")
 
-		.service('menuFactory', ['$resource', 'baseURL', function($resource,baseURL) {
-	
-			
-			var promotions = [
-				{
-						  _id:0,
-						  name:'Weekend Grand Buffet', 
-						  image: 'images/buffet.png',
-						  label:'New',
-						  price:'19.99',
-						  description:'Featuring mouthwatering combinations with a choice of five different salads, six enticing appetizers, six main entrees and five choicest desserts. Free flowing bubbly and soft drinks. All for just $19.99 per person ',
-				}
-				
-			];
-	
-			this.getDishes = function(){
-	            return $resource(baseURL+"dishes/:id",null,  {'update':{method:'PUT' }});
-	        };
+		.service('menuFactory', ['$resource', 'baseURL', function($resource, baseURL) {
 
-            this.getPromotion = function (index) {
-                
-                return promotions[index];
-            };
-	
-						
+		    this.getDishes = function() {
+		        return $resource(baseURL + "dishes/:id", null,
+		            {'update': {method: 'PUT'}});
+		    };
+
+		    this.getPromotion = function(index) {
+		      return $resource(baseURL + "promotions/" + index);
+		    };
 		}])
 
 
-		.factory('corporateFactory', function() {
-	
-			var corpfac = {};
-	
-			var leadership = [
-				{
-					name: "Albert Einstein",
-					image: 'images/einstein.jpg',
-					designation: "Chief Epicurious Officer",
-					abbr: "CEO",
-					description: "Our CEO, Peter, credits his hardworking East Asian immigrant parents who undertook the arduous journey to the shores of America with the intention of giving their children the best future. His mother's wizardy in the kitchen whipping up the tastiest dishes with whatever is available inexpensively at the supermarket, was his first inspiration to create the fusion cuisines for which The Frying Pan became well known. He brings his zeal for fusion cuisines to this restaurant, pioneering cross-cultural culinary connections."
-				},
-				{
-					name: "Cersie Lannister",
-					image: 'images/cersie.jpg',
-					designation: "Chief Food Officer",
-					abbr: "CFO",
-					description: "Our CFO, Danny, as he is affectionately referred to by his colleagues, comes from a long established family tradition in farming and produce. His experiences growing up on a farm in the Australian outback gave him great appreciation for varieties of food sources. As he puts it in his own words, Everything that runs, wins, and everything that stays, pays!"
-				},
-				{
-					name: "Emma Watson",
-						  image: 'images/emma.jpg',
-					designation: "Chief Taste Officer",
-					abbr: "CTO",
-					description: "Blessed with the most discerning gustatory sense, Agumbe, our CFO, personally ensures that every dish that we serve meets his exacting tastes. Our chefs dread the tongue lashing that ensues if their dish does not meet his exacting standards. He lives by his motto, You click only if you survive my lick."
-				},
-				{
-					name: "Katrina Kaif",
-					image: 'images/katrina.jpg',
-					designation: "Executive Chef",
-					abbr: "EC",
-					description: "Award winning three-star Michelin chef with wide International experience having worked closely with whos-who in the culinary world, he specializes in creating mouthwatering Indo-Italian fusion experiences. He says, Put together the cuisines from the two craziest cultures, and you get a winning hit! Amma Mia!"
-				}
-				
-			];
-	 
+		.factory('corporateFactory', ['$resource', 'baseURL', function($resource, baseURL) {
 
-            corpfac.getLeaders = function(){
-                
-                return leadership;
-                
-            };
+		    var corpfac = {};
 
-            corpfac.getLeader = function (index) {
-                
-                return leadership[index];
-            };
+		    corpfac.getLeaders = function() {
+		      return $resource(baseURL + "leadership/:id");
+		    };
 
-            return corpfac;
-	
-	
-		})
+		    corpfac.getLeader = function(index) {
+		      return $resource(baseURL + "leadership/" + index);
+		    };
+		    
+		    return corpfac;
+		}])
+
+		.factory('feedbackFactory', ['$resource', 'baseURL', function($resource, baseURL) {
+			var feedbackfac = {};
+
+			feedbackfac.getFeedback = function() {
+			  return $resource(baseURL + "feedback/:id");
+			};
+
+			return feedbackfac;
+		}])
 
 ;
