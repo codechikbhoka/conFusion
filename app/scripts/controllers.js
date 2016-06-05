@@ -142,7 +142,7 @@ angular.module('confusionApp')
                     }
                 );
 
-            $scope.showLeader = true;
+            $scope.showLeader = false;
             $scope.leaderStatus = "Loading...";
             $scope.leader = corporateFactory.getLeader(1).get()
                 .$promise.then(
@@ -159,7 +159,7 @@ angular.module('confusionApp')
 
         .controller('AboutController', ['$scope', 'corporateFactory', function($scope, corporateFactory) {
 
-            $scope.showLeaders = true;
+            $scope.showLeaders = false;
             $scope.leadersStatus = "Loading...";
             $scope.leaders = corporateFactory.getLeaders().query(
                 function(response) {

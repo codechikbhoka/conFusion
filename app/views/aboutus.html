@@ -2,7 +2,7 @@
         <div class="row">
             <div class="col-xs-12">
                <ul class="breadcrumb">
-                   <li><a href="index.html">Home</a></li>
+                   <li><a ui-sref="app">Home</a></li>
                    <li class="active">About Us</li>
                </ul>
             </div>
@@ -57,7 +57,7 @@
                    <li class="media" ng-repeat="leader in leaders">
                         <div class="media-left media-middle">
                             <img class="media-object img-circle"
-                            ng-src={{leader.image}} alt="Uthappizza">
+                            ng-src={{leader.image}} alt={{leader.name}} >
                         </div>
                         <div class="media-body">
                             <h3 class="media-heading">{{leader.name}} <small>{{leader.designation}}</small></h3>
